@@ -1,4 +1,10 @@
+set logfile [open "/var/log/cucumber.log" "a"]
+
 namespace eval ::cucumber:: {
+proc logtofile {msg} {
+    global logfile
+    puts $logfile "[clock format [clock seconds]]: $msg"
+}
 
   variable STEPS [list]
   variable TEST
@@ -90,8 +96,9 @@ proc ::cucumber::_search_steps {step_name {execute 0} {multiline_args {}}} {
         set retCode [catch {
           eval $existing_step_body
         } msg]
+        # we check if the step returned an TCL_ERROR. Anything else is ok for us.
+        # this avoids weird errors "can't find package Trf 2.0"
         if {$retCode == 1} {
-          # we caught an TCL_ERROR and will check for error message
           if {$msg eq "skipped"} {
             return "skipped"
           } elseif {$msg eq "pending"} {
@@ -99,7 +106,8 @@ proc ::cucumber::_search_steps {step_name {execute 0} {multiline_args {}}} {
           } elseif {$msg eq "undefined"} {
             return "undefined"
           }
-          error $::errorInfo
+          logtofile "in \"$existing_step_name\": $::errorInfo"
+          return -code error $msg
         }
       }
       return 1

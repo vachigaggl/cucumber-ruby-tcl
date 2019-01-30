@@ -108,16 +108,20 @@ Cucummber knows different types of results defined in:
 
     lib/cucumber/core/test/result.rb
 
-Passed, Failed are the obvious test results, while Skipped, Pending and Undefined are "exceptions that can be raised in a step definition causing the step to have that result."
+Passed, Failed are the most common test results, while Skipped, Pending and Undefined are "exceptions that can be raised in a step definition causing the step to have that result."
 
 To make a test step "Passed", use:
+
     return -code ok
+
 in your tcl implementation. (tcl automatically returns that at the end of each step)
 
 To make a test step "Failed", raise an error:
+
     error "The shopping cart is empty"
 
 To trigger the exceptions "Skipped", "Pending" or "Undefined", use these keywords as error message.
+
     error "skipped"; # this test step shall appeared as "Skipped" (=blue in reports)
     error "pending; # this test step shall appeared as "Pending" (= unimplemented)
     error "undefined"; # this test step shall appeared as "Undefined"
